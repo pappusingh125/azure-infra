@@ -15,7 +15,7 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              cd "$(workingDirectory)/environment/prod"
+              cd "$(Build.SourcesDirectory)/environment/prod"
                       tflint --init
                       tflint
                     displayName: 'TFLint Scan'
