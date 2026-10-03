@@ -57,6 +57,8 @@ stages:
 
   - stage: Tfsec
     displayName: Tfsec
+    condition: ${{ parameters.Tfsec }}
+    dependsOn: []
     jobs:
       - job: Tfsec
         displayName: Tfsec
@@ -70,6 +72,8 @@ stages:
 
   - stage: Checkov
     displayName: Checkov
+    condition: ${{ parameters.Checkov }}
+    dependsOn: []
     jobs:
       - job: checkov
         displayName: checkov
@@ -81,6 +85,8 @@ stages:
 
   - stage: Validate
     displayName: Validate
+    condition: ${{ parameters.Validate }}
+    dependsOn: []
     jobs:
       - job: Init
         displayName: Init
@@ -105,6 +111,7 @@ stages:
 
   - stage: Plan
     displayName: Plan
+    condition: ${{ parameters.Plan }}
     dependsOn:
       - TFLint
       - Tfsec
@@ -134,6 +141,8 @@ stages:
 
   - stage: Approval
     displayName: Manual Approval
+    condition: ${{ parameters.Approval }}
+    dependsOn: []
     pool: server
     jobs:
       - job: Approval
@@ -146,6 +155,8 @@ stages:
 
   - stage: Apply
     displayName: Apply
+    condition: ${{ parameters.Apply }}
+    dependsOn: []
     jobs:
       - job: apply
         displayName: Apply
