@@ -29,6 +29,17 @@ stages:
               $(System.DefaultWorkingDirectory)/environment/Prod
               tfsec .
 
+  - stage: Checkov
+    displayName: Checkov
+    jobs:
+      - job: checkov
+        displayName: checkov
+        steps:
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: 'checkov -d .$(System.DefaultWorkingDirectory)/environment/Prod --framework terraform'
+
   - stage: Validate
     displayName: Validate
     jobs:
