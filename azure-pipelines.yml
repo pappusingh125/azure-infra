@@ -1,0 +1,43 @@
+pool: mypool
+
+trigger:
+  - manin
+  - feature/*
+
+stages:
+  - stage: Scan
+    displayName: Tflint Scan
+    jobs:
+      - job: TFlint
+        displayName: TFLint Scan
+        steps:
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: |
+              cd "$(Build.SourcesDirectory)/environment/prod"
+                      tflint --init
+                      tflint
+                    displayName: 'TFLint Scan'
+
+  - stage: Plan
+    displayName: Plan
+    jobs:
+      - job: Init
+        steps:
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/prod'
+            backendServiceArm: 'mysc'
+            backendAzureRmStorageAccountName: 'tfstatedisk'
+            backendAzureRmContainerName: 'tfstate'
+            backendAzureRmKey: 'prod-tfstate'
+
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/prod'
+            environmentServiceNameAzureRM: 'mysc'
