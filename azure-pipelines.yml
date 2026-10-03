@@ -1,12 +1,12 @@
 pool: mypool
 
 parameters:
-- name: RunTFLint
+- name: TFLint
   displayName: RunTFLint
   type: boolean
   default: false
 
-- name: RunTfsec
+- name: Tfsec
   displayName: Tfsec
   type: boolean
   default: false
