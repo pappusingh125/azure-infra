@@ -17,7 +17,7 @@ stages:
             script: 'tflint --recursive --force'
 
   - stage: Tfsec
-    displayName: Tfsec Scan
+    displayName: Tfsec
     jobs:
       - job: Tfsec
         displayName: Tfsec
@@ -25,7 +25,9 @@ stages:
         - task: PowerShell@2
           inputs:
             targetType: 'inline'
-            script: 'tfsec .'
+            script: |
+              cd $(System.DefaultWorkingDirectory)/environment/Prod
+              tfsec .
 
   - stage: Validate
     displayName: Validate
@@ -105,6 +107,7 @@ stages:
             backendAzureRmKey: 'prod-tfstate'
 
         - task: TerraformTask@5
+          displayName: apply
           inputs:
             provider: 'azurerm'
             command: 'apply'
