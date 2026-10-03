@@ -134,7 +134,7 @@ stages:
   - stage: Apply
     displayName: Apply
     condition: ${{ parameters.Apply }}
-    dependsOn: []
+    dependsOn: Approval
     jobs:
       - job: apply
         displayName: Apply
