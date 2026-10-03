@@ -4,8 +4,8 @@ rg = {
     location = "central india"
   }
 
-    rg2 = {
-    name     = "ddl-rg"
+   rg3 = {
+    name     = "test-rg"
     location = "central india"
   }
 }
