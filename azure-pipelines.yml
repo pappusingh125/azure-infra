@@ -119,7 +119,7 @@ stages:
   - stage: Approval
     displayName: Manual Approval
     condition: ${{ parameters.Approval }}
-    dependsOn: []
+    dependsOn: Plan
     pool: server
     jobs:
       - job: Approval
