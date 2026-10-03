@@ -15,6 +15,41 @@ stages:
 
 - stage: Scan
   displayName: TFLint Scan
+  condition: or(
+    ne(variables['Build.SourceBranch'], 'refs/heads/main'),
+    eq(variables['Build.Reason'], 'PullRequest')
+  )
+jobs
+  - job: TFLint
+    displayName: TFLint Scan
+    steps:
+    - task: PowerShell@2
+      displayName: TFLint
+      inputs:
+        targetType: inline
+        script: |
+          cd "$(Build.SourcesDirectory)/environment/Prod"
+          tflint --init
+          tflint
+
+- stage: Planpool: mypool
+
+trigger:
+  branches:
+    include:
+      - main
+      - '*'
+
+pr:
+  branches:
+    include:
+      - main
+
+stages:
+
+- stage: Scan
+  displayName: TFLint Scan
+  condition: or(ne(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - job: TFLint
     displayName: TFLint Scan
@@ -31,6 +66,7 @@ stages:
 - stage: Plan
   displayName: Terraform Plan
   dependsOn: Scan
+  condition: or(ne(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - job: TerraformPlan
     displayName: Terraform Init Validate Plan
@@ -64,8 +100,80 @@ stages:
 
 - stage: Apply
   displayName: Terraform Apply
-  dependsOn: Plan
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  dependsOn: []
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables['Build.Reason'], 'PullRequest'))
+  jobs:
+  - deployment: TerraformApply
+    displayName: Terraform Apply
+    environment: terraform-prod
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - task: TerraformTask@5
+            displayName: Terraform Init
+            inputs:
+              provider: azurerm
+              command: init
+              workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+              backendServiceArm: 'mysc'
+              backendAzureRmStorageAccountName: 'tfstatedisk'
+              backendAzureRmContainerName: 'tfstate'
+              backendAzureRmKey: 'prod-tfstate'
+
+          - task: TerraformTask@5
+            displayName: Terraform Apply
+            inputs:
+              provider: azurerm
+              command: apply
+              workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+              environmentServiceNameAzureRM: 'mysc'
+  displayName: Terraform Plan
+  dependsOn: Scan
+  condition: or(
+    ne(variables['Build.SourceBranch'], 'refs/heads/main'),
+    eq(variables['Build.Reason'], 'PullRequest')
+  )
+  jobs:
+  - job: TerraformPlan
+    displayName: Terraform Init Validate Plan
+    steps:
+
+    - task: TerraformTask@5
+      displayName: Terraform Init
+      inputs:
+        provider: azurerm
+        command: init
+        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+        backendServiceArm: 'mysc'
+        backendAzureRmStorageAccountName: 'tfstatedisk'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'prod-tfstate'
+
+    - task: TerraformTask@5
+      displayName: Terraform Validate
+      inputs:
+        provider: azurerm
+        command: validate
+        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+
+    - task: TerraformTask@5
+      displayName: Terraform Plan
+      inputs:
+        provider: azurerm
+        command: plan
+        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+        environmentServiceNameAzureRM: 'mysc'
+
+- stage: Apply
+  displayName: Terraform Apply
+  dependsOn: []
+  condition: and(
+    succeeded(),
+    eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+    ne(variables['Build.Reason'], 'PullRequest')
+  )
   jobs:
   - deployment: TerraformApply
     displayName: Terraform Apply
