@@ -93,4 +93,3 @@ stages:
               command: apply
               workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
               environmentServiceNameAzureRM: 'mysc'
-```
