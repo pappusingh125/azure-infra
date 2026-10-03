@@ -1,5 +1,22 @@
 pool: mypool
 
+parameters:
+- name: RunTFLint
+  displayName: RunTFLint
+  type: boolean
+  default: false
+
+- name: RunTfsec
+  displayName: Tfsec
+  type: boolean
+  default: false
+
+parameters:
+- name: RunTfsec
+  displayName: Tfsec
+  type: boolean
+  default: false
+
 trigger:
   - main
   - '*'
