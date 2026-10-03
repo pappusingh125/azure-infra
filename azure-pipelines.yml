@@ -25,8 +25,10 @@ stages:
     displayName: Plan
     jobs:
       - job: Init
+        displayName: Init
         steps:
         - task: TerraformTask@5
+          displayName: Init
           inputs:
             provider: 'azurerm'
             command: 'init'
@@ -37,14 +39,41 @@ stages:
             backendAzureRmKey: 'prod-tfstate'
 
         - task: TerraformTask@5
+          displayName: Validate
           inputs:
             provider: 'azurerm'
             command: 'validate'
             workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
 
         - task: TerraformTask@5
+          displayName: Plan
           inputs:
             provider: 'azurerm'
             command: 'plan'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+            environmentServiceNameAzureRM: 'mysc'
+
+  - stage: Apply
+    displayName: Apply
+    jobs:
+      - job: Init
+        displayName: Init
+        steps:
+        - task: TerraformTask@5
+          displayName: Init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+            backendServiceArm: 'mysc'
+            backendAzureRmStorageAccountName: 'tfstatedisk'
+            backendAzureRmContainerName: 'tfstate'
+            backendAzureRmKey: 'prod-tfstate'
+
+        - task: TerraformTask@5
+          displayName: Apply
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
             workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
             environmentServiceNameAzureRM: 'mysc'
