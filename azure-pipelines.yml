@@ -19,7 +19,7 @@ stages:
               cd "$(Build.SourcesDirectory)/environment/Prod"
                       tflint --init
                       tflint
-                    displayName: 'TFLint Scan'
+            
 
   - stage: Plan
     displayName: Plan
