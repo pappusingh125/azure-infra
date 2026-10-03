@@ -3,6 +3,11 @@ rg = {
     name     = "pps-rg"
     location = "central india"
   }
+
+    rg2 = {
+    name     = "ddl-rg"
+    location = "central india"
+  }
 }
 
 # vnet = {
