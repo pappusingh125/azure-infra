@@ -83,16 +83,16 @@ stages:
             targetType: 'inline'
             script: 'checkov -d .$(System.DefaultWorkingDirectory)/environment/Prod --framework terraform'
 
-  - stage: Validate
-    displayName: Validate
-    condition: ${{ parameters.Validate }}
+  - stage: Plan
+    displayName: Plan
+    condition: ${{ parameters.Plan }}
     dependsOn: []
     jobs:
-      - job: Init
-        displayName: Init
+      - job: Plan
+        displayName: Plan
         steps:
         - task: TerraformTask@5
-          displayName: Terraform init
+          displayName: init
           inputs:
             provider: 'azurerm'
             command: 'init'
@@ -108,29 +108,6 @@ stages:
             provider: 'azurerm'
             command: 'validate'
             workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
-
-  - stage: Plan
-    displayName: Plan
-    condition: ${{ parameters.Plan }}
-    dependsOn:
-      - TFLint
-      - Tfsec
-      - Checkov
-      - Validate
-    jobs:
-      - job: Init
-        displayName: Init
-        steps:
-        - task: TerraformTask@5
-          displayName: Terraform init
-          inputs:
-            provider: 'azurerm'
-            command: 'init'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
-            backendServiceArm: 'mysc'
-            backendAzureRmStorageAccountName: 'tfstatedisk'
-            backendAzureRmContainerName: 'tfstate'
-            backendAzureRmKey: 'prod-tfstate'
 
         - task: TerraformTask@5
           inputs:
