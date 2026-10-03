@@ -103,6 +103,11 @@ stages:
 
   - stage: Plan
     displayName: Plan
+    dependsOn:
+      - TFLint
+      - Tfsec
+      - Checkov
+      - Validate
     jobs:
       - job: Init
         displayName: Init
