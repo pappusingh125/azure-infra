@@ -44,6 +44,8 @@ trigger:
 stages:
   - stage: TFLint
     displayName: Tflint
+    condition: ${{ parameters.TFLint }}
+    dependsOn: []
     jobs:
       - job: Tflink
         displayName: Tflint
