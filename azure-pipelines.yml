@@ -1,0 +1,21 @@
+pool: mypool
+
+trigger:
+  - manin
+  - feature/*
+
+stages:
+  - stage: Scan
+    displayName: Tflint Scan
+    jobs:
+      - job: TFlint
+        displayName: TFLint Scan
+        steps:
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: |
+              cd "$(workingDirectory)/environment/prod"
+                      tflint --init
+                      tflint
+                    displayName: 'TFLint Scan'
