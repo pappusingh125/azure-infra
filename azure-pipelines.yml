@@ -63,7 +63,7 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              $(System.DefaultWorkingDirectory)/environment/Prod
+              cd '$(System.DefaultWorkingDirectory)/environment/Prod'
               tfsec .
 
   - stage: Checkov
