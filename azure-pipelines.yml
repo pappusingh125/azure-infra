@@ -16,11 +16,6 @@ parameters:
   type: boolean
   default: false
 
-- name: Validate
-  displayName: Validate
-  type: boolean
-  default: false
-
 - name: Plan
   displayName: Plan
   type: boolean
@@ -86,7 +81,11 @@ stages:
   - stage: Plan
     displayName: Plan
     condition: ${{ parameters.Plan }}
-    dependsOn: []
+    dependsOn: 
+      - TFLint
+      - Tfsec
+      - Checkov
+      
     jobs:
       - job: Plan
         displayName: Plan
