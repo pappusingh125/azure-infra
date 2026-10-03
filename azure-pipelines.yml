@@ -110,6 +110,7 @@ stages:
             workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
 
         - task: TerraformTask@5
+          displayName: plan
           inputs:
             provider: 'azurerm'
             command: 'plan'
@@ -126,6 +127,7 @@ stages:
         displayName: Approval
         steps:
         - task: ManualValidation@1
+          displayName: approval
           inputs:
             approvers: 'Please approve'
             instructions: 'Please approve'
