@@ -15,7 +15,7 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              cd "$(Build.SourcesDirectory)/environment/prod"
+              cd "$(Build.SourcesDirectory)/environment/Prod"
                       tflint --init
                       tflint
                     displayName: 'TFLint Scan'
@@ -29,7 +29,7 @@ stages:
           inputs:
             provider: 'azurerm'
             command: 'init'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/prod'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
             backendServiceArm: 'mysc'
             backendAzureRmStorageAccountName: 'tfstatedisk'
             backendAzureRmContainerName: 'tfstate'
@@ -39,11 +39,11 @@ stages:
           inputs:
             provider: 'azurerm'
             command: 'validate'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/prod'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
 
         - task: TerraformTask@5
           inputs:
             provider: 'azurerm'
             command: 'plan'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/prod'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
             environmentServiceNameAzureRM: 'mysc'
