@@ -2,12 +2,37 @@ pool: mypool
 
 parameters:
 - name: TFLint
-  displayName: RunTFLint
+  displayName: TFLint
   type: boolean
   default: false
 
 - name: Tfsec
   displayName: Tfsec
+  type: boolean
+  default: false
+
+- name: Checkov
+  displayName: Checkov
+  type: boolean
+  default: false
+
+- name: Validate
+  displayName: Validate
+  type: boolean
+  default: false
+
+- name: Plan
+  displayName: Plan
+  type: boolean
+  default: false
+
+- name: Approval
+  displayName: Approval
+  type: boolean
+  default: false
+
+- name: Apply
+  displayName: Apply
   type: boolean
   default: false
 
