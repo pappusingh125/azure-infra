@@ -116,7 +116,9 @@ stages:
         - task: ManualValidation@1
           displayName: approval
           inputs:
+            notifyUsers: 'jdjd@123'
             approvers: 'Please approve'
+            allowApproversToApproveTheirOwnRuns: false
             instructions: 'Please approve'
 
   - stage: Apply
