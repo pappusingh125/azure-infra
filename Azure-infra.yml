@@ -1,0 +1,178 @@
+# pool: mypool
+
+# parameters:
+# - name: TFLint
+#   displayName: TFLint
+#   type: boolean
+#   default: false
+
+# - name: Tfsec
+#   displayName: Tfsec
+#   type: boolean
+#   default: false
+
+# - name: Checkov
+#   displayName: Checkov
+#   type: boolean
+#   default: false
+
+# - name: Infracost
+#   displayName: Infracost
+#   type: boolean
+#   default: false
+
+# - name: Plan
+#   displayName: Plan
+#   type: boolean
+#   default: false
+
+
+# - name: Apply
+#   displayName: Apply
+#   type: boolean
+#   default: false
+
+
+# trigger:
+#   - main
+#   - '*'
+
+# stages:
+#   - stage: TFLint
+#     displayName: Tflint
+#     condition: ${{ parameters.TFLint }}
+#     dependsOn: []
+#     jobs:
+#       - job: Tflink
+#         displayName: Tflint
+#         steps:
+#         - task: PowerShell@2
+#           inputs:
+#             targetType: 'inline'
+#             script: 'tflint --recursive --force'
+
+#   - stage: Tfsec
+#     displayName: Tfsec
+#     condition: ${{ parameters.Tfsec }}
+#     dependsOn: []
+#     jobs:
+#       - job: Tfsec
+#         displayName: Tfsec
+#         steps:
+#         - task: PowerShell@2
+#           inputs:
+#             targetType: 'inline'
+#             script: |
+#               cd '$(System.DefaultWorkingDirectory)/environment/Prod'
+#               tfsec .
+
+#   - stage: Checkov
+#     displayName: Checkov
+#     condition: ${{ parameters.Checkov }}
+#     dependsOn: []
+#     jobs:
+#       - job: checkov
+#         displayName: checkov
+#         steps:
+#         - task: PowerShell@2
+#           inputs:
+#             targetType: 'inline'
+#             script: 'checkov -d .$(System.DefaultWorkingDirectory)/environment/Prod --framework terraform'
+
+#   - stage: Infracost
+#     displayName: Infracost scan
+#     condition: ${{ parameters.Infracost }}
+#     dependsOn: []
+#     jobs:
+#       - job: Infracost 
+#         displayName: Infracost Scan
+#         steps:
+#         - task: PowerShell@2
+#           displayName: Infracost
+#           inputs:
+#             targetType: 'inline'
+#             script: 'infracost breakdown --path "$(Build.SourcesDirectory)/environment/Prod"'
+
+#   - stage: Plan
+#     displayName: Plan
+#     condition: ${{ parameters.Plan }}
+#     dependsOn: 
+#       - TFLint
+#       - Tfsec
+#       - Checkov
+      
+#     jobs:
+#       - job: Plan
+#         displayName: Plan
+#         steps:
+#         - task: TerraformTask@5
+#           displayName: init
+#           inputs:
+#             provider: 'azurerm'
+#             command: 'init'
+#             workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+#             backendServiceArm: 'mysc'
+#             backendAzureRmStorageAccountName: 'tfstatedisk'
+#             backendAzureRmContainerName: 'tfstate'
+#             backendAzureRmKey: 'prod-tfstate'
+
+#         - task: TerraformTask@5
+#           displayName: Validate
+#           inputs:
+#             provider: 'azurerm'
+#             command: 'validate'
+#             workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+
+#         - task: TerraformTask@5
+#           displayName: plan
+#           inputs:
+#             provider: 'azurerm'
+#             command: 'plan'
+#             workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+#             environmentServiceNameAzureRM: 'mysc'
+
+#   - stage: Approval
+#     displayName: Manual Approval
+#     condition: ${{ parameters.Apply }}
+#     dependsOn: Plan
+#     pool: server
+#     jobs:
+#       - job: Approval
+#         displayName: Approval
+#         steps:
+#         - task: ManualValidation@1
+#           displayName: approval
+#           inputs:
+#             approvers: 'Please approve'
+#             instructions: 'Please approve'
+
+#   - stage: Apply
+#     displayName: Apply
+#     condition: ${{ parameters.Apply }}
+#     dependsOn: Plan
+#     jobs:
+#       - job: apply
+#         displayName: Apply
+#         steps:
+#         - task: TerraformTask@5
+#           displayName: init
+#           inputs:
+#             provider: 'azurerm'
+#             command: 'init'
+#             workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+#             backendServiceArm: 'mysc'
+#             backendAzureRmStorageAccountName: 'tfstatedisk'
+#             backendAzureRmContainerName: 'tfstate'
+#             backendAzureRmKey: 'prod-tfstate'
+
+#         - task: TerraformTask@5
+#           displayName: apply
+#           inputs:
+#             provider: 'azurerm'
+#             command: 'apply'
+#             workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Prod'
+#             environmentServiceNameAzureRM: 'mysc'
+        
+
+
+    
