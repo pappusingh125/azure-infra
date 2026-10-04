@@ -12,8 +12,8 @@ trigger:
 
 stages:
   - stage: TFLint
-    displayName: Tflint
-    condition: ${{ parameters.TFLint }}
+    # displayName: Tflint
+    # condition: ${{ parameters.TFLint }}
     dependsOn: []
     jobs:
       - job: Tflink
@@ -25,8 +25,8 @@ stages:
             script: 'tflint --recursive --force'
 
   - stage: Tfsec
-    displayName: Tfsec
-    condition: ${{ parameters.Tfsec }}
+    # displayName: Tfsec
+    # condition: ${{ parameters.Tfsec }}
     dependsOn: []
     jobs:
       - job: Tfsec
@@ -41,8 +41,8 @@ stages:
 
   - stage: Checkov
     displayName: Checkov
-    condition: ${{ parameters.Checkov }}
-    dependsOn: []
+    # condition: ${{ parameters.Checkov }}
+    # dependsOn: []
     jobs:
       - job: checkov
         displayName: checkov
@@ -54,8 +54,8 @@ stages:
 
   - stage: Infracost
     displayName: Infracost scan
-    condition: ${{ parameters.Infracost }}
-    dependsOn: []
+    # condition: ${{ parameters.Infracost }}
+    # dependsOn: []
     jobs:
       - job: Infracost 
         displayName: Infracost Scan
@@ -68,11 +68,11 @@ stages:
 
   - stage: Plan
     displayName: Plan
-    condition: ${{ parameters.Plan }}
-    dependsOn: 
-      - TFLint
-      - Tfsec
-      - Checkov
+    # condition: ${{ parameters.Plan }}
+    # dependsOn: 
+    #   - TFLint
+    #   - Tfsec
+    #   - Checkov
       
     jobs:
       - job: Plan
@@ -106,8 +106,8 @@ stages:
 
   - stage: Approval
     displayName: Manual Approval
-    condition: ${{ parameters.Apply }}
-    dependsOn: Plan
+    # condition: ${{ parameters.Apply }}
+    # dependsOn: Plan
     pool: server
     jobs:
       - job: Approval
@@ -121,8 +121,8 @@ stages:
 
   - stage: Apply
     displayName: Apply
-    condition: ${{ parameters.Apply }}
-    dependsOn: Plan
+    # condition: ${{ parameters.Apply }}
+    # dependsOn: Plan
     jobs:
       - job: apply
         displayName: Apply
