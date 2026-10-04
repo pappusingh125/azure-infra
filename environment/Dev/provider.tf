@@ -7,9 +7,9 @@ terraform {
     }
   }
   backend "azurerm" {
-    resource_group_name  = "pps-prod-rg"
-    storage_account_name = "ppssttoorraaggee"
-    container_name       = "ppscontainer"
+    resource_group_name  = "b18g94"
+    storage_account_name = "tfstatedisk"
+    container_name       = "tfstate"
     key                  = "Dev.tfstate"
   }
 }
