@@ -91,7 +91,7 @@ stages:
           displayName: Infracost
           inputs:
             targetType: 'inline'
-            script: 'infracost breakdown --path "$(Build.SourcesDirectory)\environment\Prod"'
+            script: 'infracost breakdown --path "$(Build.SourcesDirectory)/environment/Prod"'
 
   - stage: Plan
     displayName: Plan
