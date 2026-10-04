@@ -90,28 +90,7 @@ stages:
         - task: PowerShell@2
           inputs:
             targetType: 'inline'
-            script: |
-              $ErrorActionPreference = "Stop"
-              
-              $TerraformPath = "$(Build.SourcesDirectory)\environment\Prod"
-              $ReportPath    = "$(Build.ArtifactStagingDirectory)\infracost-report.txt"
-              
-              Write-Host "Running Infracost scan..."
-              Write-Host "Terraform Path: $TerraformPath"
-              
-              infracost breakdown `
-                  --path "$TerraformPath" `
-                  --format table `
-                  | Tee-Object -FilePath "$ReportPath"
-              
-              if ($LASTEXITCODE -ne 0) {
-                  Write-Error "Infracost scan failed."
-                  exit $LASTEXITCODE
-              }
-              
-              Write-Host ""
-              Write-Host "Infracost report generated:"
-              Write-Host "$ReportPath"
+            script: 'infracost breakdown --path "$(Build.SourcesDirectory)\environment\Prod"'
 
   - stage: Plan
     displayName: Plan
