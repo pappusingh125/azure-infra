@@ -1,15 +1,14 @@
 pool: mypool
 
-
-
-
 trigger:
-  - main
-  - '*'
-
-paths:
+  branches:
     include:
-      - environment/Prod/*
+      - main
+      - '*'
+
+  paths:
+    include:
+      - environment/Dev/*
 
 stages:
   - stage: TFLint
