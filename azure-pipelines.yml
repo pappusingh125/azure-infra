@@ -90,45 +90,7 @@ stages:
         - task: PowerShell@2
           inputs:
             targetType: 'inline'
-            script: |
-              Write-Host "========================================"
-              Write-Host "Infracost Cost Scan"
-              Write-Host "========================================"
-              
-              # Verify Infracost
-              infracost --version
-              
-              # Check API key
-              if ([string]::IsNullOrWhiteSpace($env:INFRACOST_API_KEY)) {
-                  Write-Error "INFRACOST_API_KEY is not set."
-                  exit 1
-              }
-              
-              Write-Host "Infracost API key detected."
-              
-              # Go to Terraform root directory
-              Set-Location "$(System.DefaultWorkingDirectory)"
-              
-              Write-Host "Terraform directory:"
-              Get-Location
-              
-              Write-Host "========================================"
-              Write-Host "Running Infracost..."
-              Write-Host "========================================"
-              
-              # Run cost scan
-              infracost breakdown `
-                  --path . `
-                  --format table
-              
-              if ($LASTEXITCODE -ne 0) {
-                  Write-Error "Infracost scan failed."
-                  exit $LASTEXITCODE
-              }
-              
-              Write-Host "========================================"
-              Write-Host "Infracost scan completed successfully."
-              Write-Host "========================================"
+            script: 'infracost breakdown --path ".\environment\Prod"'
 
   - stage: Plan
     displayName: Plan
