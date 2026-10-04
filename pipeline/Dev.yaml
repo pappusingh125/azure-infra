@@ -146,6 +146,7 @@ stages:
             command: 'apply'
             workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Dev'
             environmentServiceNameAzureRM: 'mysc'
+            
         
 
 
