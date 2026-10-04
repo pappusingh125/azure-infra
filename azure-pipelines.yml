@@ -16,15 +16,16 @@ parameters:
   type: boolean
   default: false
 
+- name: Infracost
+  displayName: Infracost
+  type: boolean
+  default: false
+
 - name: Plan
   displayName: Plan
   type: boolean
   default: false
 
-- name: Approval
-  displayName: Approval
-  type: boolean
-  default: false
 
 - name: Apply
   displayName: Apply
@@ -80,9 +81,70 @@ stages:
 
   - stage: Infracost
     displayName: Infracost scan
+    condition: ${{ parameters.Infracost }}
+    dependsOn: []
     jobs:
       - job: Infracost 
-        displayName: Infracost Sc
+        displayName: Infracost Scan
+        steps:
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: |
+              - task: PowerShell@2
+                displayName: "Infracost - Install & Scan"
+                inputs:
+                  targetType: inline
+                  script: |
+                    Write-Host "======================================"
+                    Write-Host "Checking Infracost installation..."
+                    Write-Host "======================================"
+              
+                    # Check Infracost
+                    $infracost = Get-Command infracost -ErrorAction SilentlyContinue
+              
+                    if (-not $infracost) {
+              
+                        Write-Host "Infracost not found. Installing..."
+              
+                        $installScript = "$env:TEMP\install-infracost.ps1"
+              
+                        Invoke-WebRequest `
+                          -Uri "https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.ps1" `
+                          -OutFile $installScript
+              
+                        & powershell.exe -ExecutionPolicy Bypass -File $installScript
+              
+                        # Refresh PATH
+                        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" +
+                                    [System.Environment]::GetEnvironmentVariable("Path","User")
+              
+                        Write-Host "Infracost installation completed."
+                    }
+                    else {
+                        Write-Host "Infracost already installed."
+                    }
+              
+                    # Verify
+                    infracost --version
+              
+                    Write-Host "======================================"
+                    Write-Host "Running Infracost scan..."
+                    Write-Host "======================================"
+              
+                    # Terraform directory
+                    $terraformPath = "$(System.DefaultWorkingDirectory)"
+              
+                    Set-Location $terraformPath
+              
+                    # Generate cost breakdown
+                    infracost breakdown `
+                      --path . `
+                      --format table
+              
+                    Write-Host "======================================"
+                    Write-Host "Infracost scan completed."
+                    Write-Host "======================================"
 
   - stage: Plan
     displayName: Plan
@@ -124,7 +186,7 @@ stages:
 
   - stage: Approval
     displayName: Manual Approval
-    condition: ${{ parameters.Approval }}
+    condition: ${{ parameters.Apply }}
     dependsOn: Plan
     pool: server
     jobs:
@@ -140,7 +202,7 @@ stages:
   - stage: Apply
     displayName: Apply
     condition: ${{ parameters.Apply }}
-    dependsOn: Approval
+    dependsOn: Plan
     jobs:
       - job: apply
         displayName: Apply
