@@ -78,6 +78,12 @@ stages:
             targetType: 'inline'
             script: 'checkov -d .$(System.DefaultWorkingDirectory)/environment/Prod --framework terraform'
 
+  - stage: Infracost
+    displayName: Infracost scan
+    jobs:
+      - job: Infracost 
+        displayName: Infracost Sc
+
   - stage: Plan
     displayName: Plan
     condition: ${{ parameters.Plan }}
