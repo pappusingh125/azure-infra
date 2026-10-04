@@ -88,6 +88,7 @@ stages:
         displayName: Infracost Scan
         steps:
         - task: PowerShell@2
+          displayName: Infracost
           inputs:
             targetType: 'inline'
             script: 'infracost breakdown --path "$(Build.SourcesDirectory)\environment\Prod"'
