@@ -91,36 +91,44 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              $infracost = Get-Command infracost -ErrorAction SilentlyContinue
+              Write-Host "========================================"
+              Write-Host "Infracost Cost Scan"
+              Write-Host "========================================"
               
-              if ($null -eq $infracost) {
-              
-                  Write-Host "Infracost not found. Installing..."
-              
-                  $installScript = "$env:TEMP\install-infracost.ps1"
-              
-                  Invoke-WebRequest `
-                    -Uri "https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.ps1" `
-                    -OutFile $installScript
-              
-                  powershell.exe `
-                    -ExecutionPolicy Bypass `
-                    -File $installScript
-              
-                  $env:Path = [Environment]::GetEnvironmentVariable("Path","Machine") + ";" +
-                              [Environment]::GetEnvironmentVariable("Path","User")
-              }
-              else {
-                  Write-Host "Infracost already installed."
-              }
-              
+              # Verify Infracost
               infracost --version
               
+              # Check API key
+              if ([string]::IsNullOrWhiteSpace($env:INFRACOST_API_KEY)) {
+                  Write-Error "INFRACOST_API_KEY is not set."
+                  exit 1
+              }
+              
+              Write-Host "Infracost API key detected."
+              
+              # Go to Terraform root directory
               Set-Location "$(System.DefaultWorkingDirectory)"
               
+              Write-Host "Terraform directory:"
+              Get-Location
+              
+              Write-Host "========================================"
+              Write-Host "Running Infracost..."
+              Write-Host "========================================"
+              
+              # Run cost scan
               infracost breakdown `
-                --path . `
-                --format table
+                  --path . `
+                  --format table
+              
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Infracost scan failed."
+                  exit $LASTEXITCODE
+              }
+              
+              Write-Host "========================================"
+              Write-Host "Infracost scan completed successfully."
+              Write-Host "========================================"
 
   - stage: Plan
     displayName: Plan
