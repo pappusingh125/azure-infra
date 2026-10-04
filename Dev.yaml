@@ -11,60 +11,60 @@ trigger:
       - environment/Dev/*
 
 stages:
-  - stage: TFLint
-    displayName: Tflint
-    # condition: ${{ parameters.TFLint }}
-    # dependsOn: []
-    jobs:
-      - job: Tflink
-        displayName: Tflint
-        steps:
-        - task: PowerShell@2
-          inputs:
-            targetType: 'inline'
-            script: 'tflint --recursive --force'
+  # - stage: TFLint
+  #   displayName: Tflint
+  #   # condition: ${{ parameters.TFLint }}
+  #   # dependsOn: []
+  #   jobs:
+  #     - job: Tflink
+  #       displayName: Tflint
+  #       steps:
+  #       - task: PowerShell@2
+  #         inputs:
+  #           targetType: 'inline'
+  #           script: 'tflint --recursive --force'
 
-  - stage: Tfsec
-    displayName: Tfsec
-    # condition: ${{ parameters.Tfsec }}
-    # dependsOn: []
-    jobs:
-      - job: Tfsec
-        displayName: Tfsec
-        steps:
-        - task: PowerShell@2
-          inputs:
-            targetType: 'inline'
-            script: |
-              cd '$(System.DefaultWorkingDirectory)/environment/Dev'
-              tfsec .
+  # - stage: Tfsec
+  #   displayName: Tfsec
+  #   # condition: ${{ parameters.Tfsec }}
+  #   # dependsOn: []
+  #   jobs:
+  #     - job: Tfsec
+  #       displayName: Tfsec
+  #       steps:
+  #       - task: PowerShell@2
+  #         inputs:
+  #           targetType: 'inline'
+  #           script: |
+  #             cd '$(System.DefaultWorkingDirectory)/environment/Dev'
+  #             tfsec .
 
-  - stage: Checkov
-    displayName: Checkov
-    # condition: ${{ parameters.Checkov }}
-    # dependsOn: []
-    jobs:
-      - job: checkov
-        displayName: checkov
-        steps:
-        - task: PowerShell@2
-          inputs:
-            targetType: 'inline'
-            script: 'checkov -d .$(System.DefaultWorkingDirectory)/environment/Dev --framework terraform'
+  # - stage: Checkov
+  #   displayName: Checkov
+  #   # condition: ${{ parameters.Checkov }}
+  #   # dependsOn: []
+  #   jobs:
+  #     - job: checkov
+  #       displayName: checkov
+  #       steps:
+  #       - task: PowerShell@2
+  #         inputs:
+  #           targetType: 'inline'
+  #           script: 'checkov -d .$(System.DefaultWorkingDirectory)/environment/Dev --framework terraform'
 
-  - stage: Infracost
-    displayName: Infracost scan
-    # condition: ${{ parameters.Infracost }}
-    # dependsOn: []
-    jobs:
-      - job: Infracost 
-        displayName: Infracost Scan
-        steps:
-        - task: PowerShell@2
-          displayName: Infracost
-          inputs:
-            targetType: 'inline'
-            script: 'infracost breakdown --path "$(Build.SourcesDirectory)/environment/Dev"'
+  # - stage: Infracost
+  #   displayName: Infracost scan
+  #   # condition: ${{ parameters.Infracost }}
+  #   # dependsOn: []
+  #   jobs:
+  #     - job: Infracost 
+  #       displayName: Infracost Scan
+  #       steps:
+  #       - task: PowerShell@2
+  #         displayName: Infracost
+  #         inputs:
+  #           targetType: 'inline'
+  #           script: 'infracost breakdown --path "$(Build.SourcesDirectory)/environment/Dev"'
 
   - stage: Plan
     displayName: Plan
