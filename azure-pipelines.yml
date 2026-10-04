@@ -91,60 +91,36 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              - task: PowerShell@2
-                displayName: "Infracost - Install & Scan"
-                inputs:
-                  targetType: inline
-                  script: |
-                    Write-Host "======================================"
-                    Write-Host "Checking Infracost installation..."
-                    Write-Host "======================================"
+              $infracost = Get-Command infracost -ErrorAction SilentlyContinue
               
-                    # Check Infracost
-                    $infracost = Get-Command infracost -ErrorAction SilentlyContinue
+              if ($null -eq $infracost) {
               
-                    if (-not $infracost) {
+                  Write-Host "Infracost not found. Installing..."
               
-                        Write-Host "Infracost not found. Installing..."
+                  $installScript = "$env:TEMP\install-infracost.ps1"
               
-                        $installScript = "$env:TEMP\install-infracost.ps1"
+                  Invoke-WebRequest `
+                    -Uri "https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.ps1" `
+                    -OutFile $installScript
               
-                        Invoke-WebRequest `
-                          -Uri "https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.ps1" `
-                          -OutFile $installScript
+                  powershell.exe `
+                    -ExecutionPolicy Bypass `
+                    -File $installScript
               
-                        & powershell.exe -ExecutionPolicy Bypass -File $installScript
+                  $env:Path = [Environment]::GetEnvironmentVariable("Path","Machine") + ";" +
+                              [Environment]::GetEnvironmentVariable("Path","User")
+              }
+              else {
+                  Write-Host "Infracost already installed."
+              }
               
-                        # Refresh PATH
-                        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" +
-                                    [System.Environment]::GetEnvironmentVariable("Path","User")
+              infracost --version
               
-                        Write-Host "Infracost installation completed."
-                    }
-                    else {
-                        Write-Host "Infracost already installed."
-                    }
+              Set-Location "$(System.DefaultWorkingDirectory)"
               
-                    # Verify
-                    infracost --version
-              
-                    Write-Host "======================================"
-                    Write-Host "Running Infracost scan..."
-                    Write-Host "======================================"
-              
-                    # Terraform directory
-                    $terraformPath = "$(System.DefaultWorkingDirectory)"
-              
-                    Set-Location $terraformPath
-              
-                    # Generate cost breakdown
-                    infracost breakdown `
-                      --path . `
-                      --format table
-              
-                    Write-Host "======================================"
-                    Write-Host "Infracost scan completed."
-                    Write-Host "======================================"
+              infracost breakdown `
+                --path . `
+                --format table
 
   - stage: Plan
     displayName: Plan
