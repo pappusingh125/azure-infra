@@ -13,6 +13,9 @@ pool: mypool
 # - name: Container
 #   value: 'tfstate'
 
+variables:
+- group: azure
+
 parameters:
 - name: Init
   displayName: Init
@@ -29,81 +32,73 @@ parameters:
   default: false
   type: boolean
 
-
 stages:
-- stage: Init
-  displayName: Init
-  condition: ${{parameters.Init}}
-  dependsOn:[]
-  jobs:
-  - job: Init
+  - stage: Init
     displayName: Init
-    steps:
-    - task: TerraformTask@5
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(work_dir)'
-        backendServiceArm: 'sharedsvc'
-        backendAzureRmResourceGroupName: '$(rg)'
-        backendAzureRmStorageAccountName: '$(storage)'
-        backendAzureRmContainerName: '$(container'
-        backendAzureRmKey: 'dev-tfstate'
+    jobs:
+      - job: Init
+        displayName: Init
+        steps:
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: 'work_dir'
+            backendServiceArm: 'sharedsvc'
+            backendAzureRmResourceGroupName: 'rg'
+            backendAzureRmStorageAccountName: 'storage'
+            backendAzureRmContainerName: 'Container'
+            backendAzureRmKey: 'dev-tfstate'
 
-    - task: TerraformTask@5
-      inputs:
-        provider: 'azurerm'
-        command: 'validate'
-        workingDirectory: '$(work_dir)'
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+            workingDirectory: 'work_dir'
 
-- stage: Plan
-  displayName: Plan
-  condition: ${{parameters.Plan}}
-  dependsOn:[]
-  jobs:
-  - job: Init
-    displayName: Init
-    steps:
-    - task: TerraformTask@5
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(work_dir)'
-        backendServiceArm: 'sharedsvc'
-        backendAzureRmResourceGroupName: '$(rg)'
-        backendAzureRmStorageAccountName: '$(storage)'
-        backendAzureRmContainerName: '$(container'
-        backendAzureRmKey: 'dev-tfstate'
+  - stage: Plan
+    displayName: Plan
+    jobs:
+      - job: Plan
+        steps:
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: 'work_dir'
+            backendServiceArm: 'sharedsvc'
+            backendAzureRmResourceGroupName: 'rg'
+            backendAzureRmStorageAccountName: 'storage'
+            backendAzureRmContainerName: 'Container'
+            backendAzureRmKey: 'dev-tfstate'
 
-    - task: TerraformTask@5
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        workingDirectory: '$(work_dir)'
-        environmentServiceNameAzureRM: 'sharedsvc'
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: 'work_dir'
+            environmentServiceNameAzureRM: 'sharedsvc'
 
-- stage: Apply
-  displayName: Apply
-  condition: ${{parameters.Apply}}
-  dependsOn:[]
-  jobs:
-  - job: Init
-    displayName: Init
-    steps:
-    - task: TerraformTask@5
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(work_dir)'
-        backendServiceArm: 'sharedsvc'
-        backendAzureRmResourceGroupName: '$(rg)'
-        backendAzureRmStorageAccountName: '$(storage)'
-        backendAzureRmContainerName: '$(container'
-        backendAzureRmKey: 'dev-tfstate'
+  - stage: Apply
+    displayName: Apply
+    jobs:
+      - job: Apply
+        displayName: Applt
+        steps:
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: 'work_dir'
+            backendServiceArm: 'sharedsvc'
+            backendAzureRmResourceGroupName: 'rg'
+            backendAzureRmStorageAccountName: 'storage'
+            backendAzureRmContainerName: 'Container'
+            backendAzureRmKey: 'dev-tfstate'
 
-    - task: TerraformTask@5
-      inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        workingDirectory: '$(work_dir)'
-        environmentServiceNameAzureRM: 'sharedsvc'
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            workingDirectory: 'work_dir'
+            environmentServiceNameAzureRM: 'sharedsvc'
