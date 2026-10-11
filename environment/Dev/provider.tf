@@ -7,10 +7,10 @@ terraform {
     }
   }
   backend "azurerm" {
-    resource_group_name  = "b18g94"
-    storage_account_name = "tfstatedisk"
-    container_name       = "tfstate"
-    key                  = "Dev.tfstate"
+    resource_group_name  = "saurav-rg"
+    storage_account_name = "saurav0231231"
+    container_name       = "ajaystatefile"
+    key                  = "pappu.tfstate"
   }
 }
 provider "azurerm" {
