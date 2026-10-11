@@ -1,0 +1,41 @@
+pool: mypool
+
+# trigger:
+#   - main
+#   - '*'
+
+stages:
+    - stage: Validate
+      displayName: Validate
+      jobs:
+          - job: Validate
+            displayName: Validate
+            steps:
+            - task: TerraformTask@5
+              inputs:
+                provider: 'azurerm'
+                command: 'init'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+                backendServiceArm: 'mysc'
+                backendAzureRmStorageAccountName: 'tfstatedisk'
+                backendAzureRmContainerName: 'tfstate'
+                backendAzureRmKey: 'dev-tfstate'
+
+            - task: TerraformTask@5
+              inputs:
+                provider: 'azurerm'
+                command: 'validate'
+                workingDirectory: '$(System.DefaultWorkingDirectory)//environment/dev'
+
+    - stage: Plan
+      displayName: Plan
+      jobs:
+          - job: Plan
+            displayName: Plan
+            steps:
+            - task: TerraformTask@5
+              inputs:
+                provider: 'azurerm'
+                command: 'plan'
+                workingDirectory: '$(System.DefaultWorkingDirectory)//environment/dev'
+                environmentServiceNameAzureRM: 'mysc'
