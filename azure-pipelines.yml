@@ -1,0 +1,88 @@
+pool: mypool
+
+parameters:
+- name: Validate
+  displayName: Validate
+  default: false
+  type: boolean
+
+- name: Plan
+  displayName: Plan
+  default: false
+  type: boolean
+
+- name: Apply
+  displayName: Apply
+  default: false
+  type: boolean
+
+
+stages:
+- stage: Validate
+  displayName: Validate
+  jobs:
+  - job: Init
+    displayName: Init
+    steps:
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Dev'
+        backendServiceArm: 'sharedsvc'
+        backendAzureRmResourceGroupName: 'b18g94'
+        backendAzureRmStorageAccountName: 'tfstatedisk'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'dev-tfstate'
+
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Dev'
+
+- stage: Plan
+  displayName: Plan
+  jobs:
+  - job: Init
+    displayName: Init
+    steps:
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Dev'
+        backendAzureRmResourceGroupName: 'b18g94'
+        backendAzureRmStorageAccountName: 'tfstatedisk'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'dev-tfstate'
+
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Dev'
+        environmentServiceNameAzureRM: 'sharedsvc'
+
+- stage: Apply
+  displayName: Apply
+  jobs:
+  - job: Init
+    displayName: Init
+    steps:
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Dev'
+        backendAzureRmResourceGroupName: 'b18g94'
+        backendAzureRmStorageAccountName: 'tfstatedisk'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'dev-tfstate'
+
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Dev'
+        environmentServiceNameAzureRM: 'sharedsvc'
