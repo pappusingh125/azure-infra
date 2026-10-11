@@ -1,5 +1,18 @@
 pool: mypool
 
+variables:
+- name: work_dir
+  value: (System.DefaultWorkingDirectory)/environment/Dev
+
+- name: rg
+  value: b18g94
+
+- name: storage
+  value: tfstatedisk
+
+- name: Container
+  value: tfstate
+
 parameters:
 - name: Init
   displayName: Init
@@ -28,11 +41,11 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Dev'
+        workingDirectory: '$(work_dir)'
         backendServiceArm: 'sharedsvc'
-        backendAzureRmResourceGroupName: 'b18g94'
-        backendAzureRmStorageAccountName: 'tfstatedisk'
-        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmResourceGroupName: '$(rg)'
+        backendAzureRmStorageAccountName: '$(storage)'
+        backendAzureRmContainerName: '$(container'
         backendAzureRmKey: 'dev-tfstate'
 
     - task: TerraformTask@5
@@ -51,10 +64,11 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Dev'
-        backendAzureRmResourceGroupName: 'b18g94'
-        backendAzureRmStorageAccountName: 'tfstatedisk'
-        backendAzureRmContainerName: 'tfstate'
+        workingDirectory: '$(work_dir)'
+        backendServiceArm: 'sharedsvc'
+        backendAzureRmResourceGroupName: '$(rg)'
+        backendAzureRmStorageAccountName: '$(storage)'
+        backendAzureRmContainerName: '$(container'
         backendAzureRmKey: 'dev-tfstate'
 
     - task: TerraformTask@5
@@ -74,10 +88,11 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/environment/Dev'
-        backendAzureRmResourceGroupName: 'b18g94'
-        backendAzureRmStorageAccountName: 'tfstatedisk'
-        backendAzureRmContainerName: 'tfstate'
+        workingDirectory: '$(work_dir)'
+        backendServiceArm: 'sharedsvc'
+        backendAzureRmResourceGroupName: '$(rg)'
+        backendAzureRmStorageAccountName: '$(storage)'
+        backendAzureRmContainerName: '$(container'
         backendAzureRmKey: 'dev-tfstate'
 
     - task: TerraformTask@5
