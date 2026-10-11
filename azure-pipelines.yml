@@ -31,8 +31,8 @@ parameters:
 
 
 stages:
-- stage: Validate
-  displayName: Validate
+- stage: Init
+  displayName: Init
   jobs:
   - job: Init
     displayName: Init
