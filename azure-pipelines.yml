@@ -1,8 +1,8 @@
 pool: mypool
 
 parameters:
-- name: Validate
-  displayName: Validate
+- name: Init
+  displayName: Init
   default: false
   type: boolean
 
