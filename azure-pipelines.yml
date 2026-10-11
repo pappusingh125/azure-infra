@@ -1,17 +1,17 @@
 pool: mypool
 
-variables:
-- name: work_dir
-  value: (System.DefaultWorkingDirectory)/environment/Dev
+# variables:
+# - name: work_dir
+#   value: '(System.DefaultWorkingDirectory)/environment/Dev'
 
-- name: rg
-  value: b18g94
+# - name: rg
+#   value: 'b18g94'
 
-- name: storage
-  value: tfstatedisk
+# - name: storage
+#   value: 'tfstatedisk'
 
-- name: Container
-  value: tfstate
+# - name: Container
+#   value: 'tfstate'
 
 parameters:
 - name: Init
