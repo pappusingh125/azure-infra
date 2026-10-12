@@ -1,3 +1,8 @@
+- name: Apply
+  displayName: Apply
+  default: false
+  type: boolean
+
 stages:
 - stage: Apply
     displayName: Apply
