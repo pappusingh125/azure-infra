@@ -35,4 +35,12 @@ parameters:
 stages:
 - template: templates/Init.yaml
   parameters:
-    Init: ${{parameters.Init}}
+    Init: ${{ parameters.Init }}
+
+- template: templates/Plan.yaml
+  parameters:
+    Plan: ${{ parameters.Plan }}
+
+- template: templates/Apply.yaml
+  parameters:
+    Apply: ${{ parameters.Apply }}
