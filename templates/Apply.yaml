@@ -1,3 +1,4 @@
+parameters
 - name: Apply
   displayName: Apply
   default: false
