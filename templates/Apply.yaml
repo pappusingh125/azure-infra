@@ -5,26 +5,26 @@
 
 stages:
 - stage: Apply
-    displayName: Apply
+   displayName: Apply
     
-    jobs:
-      - job: Apply
-        displayName: Applt
-        steps:
-        - task: TerraformTask@5
-          inputs:
-            provider: 'azurerm'
-            command: 'init'
-            workingDirectory: 'work_dir'
-            backendServiceArm: 'sharedsvc'
-            backendAzureRmResourceGroupName: 'rg'
-            backendAzureRmStorageAccountName: 'storage'
-            backendAzureRmContainerName: 'Container'
-            backendAzureRmKey: 'dev-tfstate'
+  jobs:
+    - job: Apply
+      displayName: Applt
+      steps:
+      - task: TerraformTask@5
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: 'work_dir'
+          backendServiceArm: 'sharedsvc'
+          backendAzureRmResourceGroupName: 'rg'
+          backendAzureRmStorageAccountName: 'storage'
+          backendAzureRmContainerName: 'Container'
+          backendAzureRmKey: 'dev-tfstate'
 
-        - task: TerraformTask@5
-          inputs:
-            provider: 'azurerm'
-            command: 'apply'
-            workingDirectory: 'work_dir'
-            environmentServiceNameAzureRM: 'sharedsvc'
+      - task: TerraformTask@5
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          workingDirectory: 'work_dir'
+          environmentServiceNameAzureRM: 'sharedsvc'
