@@ -37,10 +37,10 @@ stages:
   parameters:
     Init: ${{ parameters.Init }}
 
-- template: templates/Plan.yaml
+- template: templates/Init.yaml
   parameters:
     Plan: ${{ parameters.Plan }}
 
-- template: templates/Apply.yaml
+- template: templates/Init.yaml
   parameters:
     Apply: ${{ parameters.Apply }}
