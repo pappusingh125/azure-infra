@@ -6,7 +6,7 @@ parameters
 
 stages:
 - stage: Plan
-    displayName: Plan
+   displayName: Plan
     jobs:
       - job: Plan
         steps:
