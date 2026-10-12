@@ -1,3 +1,9 @@
+parameters:
+- name: Init
+  displayName: Init
+  default: false
+  type: boolean
+
 stages:
   - stage: Init
     displayName: Init
