@@ -1,3 +1,8 @@
+- name: Plan
+  displayName: Plan
+  default: false
+  type: boolean
+
 stages:
 - stage: Plan
     displayName: Plan
